@@ -1,0 +1,65 @@
+plugins {
+    // Plugin para compilar o código Java
+    id 'java'
+
+    // Plugin para executar testes de unidade
+    id 'jacoco'
+}
+
+// Configurações do plugin do Jacoco
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+// Configurações do plugin Java
+java {
+    // Configura o destino do Java para a versão 11
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+// Dependências do projeto
+dependencies {
+    // Dependência do JUnit para testes de unidade
+    testImplementation 'junit:junit:4.13.2'
+}
+
+// Tarefas personalizadas
+tasks {
+    // Tarefa para criar um JAR com todas as dependências
+    task fatJar(type: Jar) {
+        manifest {
+            attributes 'Implementation-Title': 'My Project',
+                       'Implementation-Version': version,
+                       'Main-Class': 'com.example.Main'
+        }
+        from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+        with jar
+    }
+
+    // Tarefa para executar os testes de unidade e gerar relatórios do Jacoco
+    task jacocoTestReport(type: JacocoReport, dependsOn: ['test']) {
+        reports {
+            xml.enabled true
+            html.enabled true
+        }
+        classDirectories = fileTree(dir: 'build/classes/java/test', includes: ['**/*.class'])
+        sourceDirectories = files('src/test/java')
+        executionData = files('build/jacoco/test.exec')
+    }
+}
+
+// Configurações adicionais do processo de compilação
+compileJava {
+    // Configurações do compilador Java
+    options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+}
+
+// Configurações adicionais do processo de teste
+test {
+    // Configurações do ambiente de teste
+    useJUnitPlatform()
+    testLogging {
+        events 'PASSED', 'FAILED', 'SKIPPED'
+    }
+}
