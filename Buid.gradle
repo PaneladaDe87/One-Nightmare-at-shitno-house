@@ -63,3 +63,15 @@ test {
         events 'PASSED', 'FAILED', 'SKIPPED'
     }
 }
+
+// Configurações do plugin Java
+java {
+    // Configura o destino do Java para a versão 11
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+    // Configura a versão do JDK para usar
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
