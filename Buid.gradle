@@ -80,6 +80,6 @@ java {
 distributionManagement {
     // Define a distribuição para ser utilizada
     repository {
-        url "https://your-repository-url"
+        url "https://github.com/PaneladaDe87/One-Nightmare-at-shitno-house"
     }
 }
