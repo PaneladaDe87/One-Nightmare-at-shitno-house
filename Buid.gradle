@@ -75,3 +75,11 @@ java {
         languageVersion = JavaLanguageVersion.of(11)
     }
 }
+
+// Define a distribuição do Gradle a ser usada
+distributionManagement {
+    // Define a distribuição para ser utilizada
+    repository {
+        url "https://your-repository-url"
+    }
+}
