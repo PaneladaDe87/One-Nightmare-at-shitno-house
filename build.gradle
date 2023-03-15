@@ -1,5 +1,8 @@
 // Configurações do projeto
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
+
 android {
     compileSdkVersion 31
     buildToolsVersion "31.0.0"
