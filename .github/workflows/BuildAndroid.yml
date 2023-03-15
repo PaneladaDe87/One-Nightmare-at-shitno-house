@@ -20,6 +20,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: ${{ runner.os }}-gradle-
 
+      - name: Set up environment
+        run: echo "sdk.dir=/path/to/android/sdk" > local.properties
+
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
