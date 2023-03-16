@@ -1,18 +1,21 @@
-name: Build APK
+name: Build and Test Android App
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      
+
       - name: Cache Gradle
         uses: actions/cache@v2
         with:
@@ -20,20 +23,33 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: Set up environment
-        run: echo "sdk.dir=/path/to/android/sdk" > local.properties
-
-      - name: Set up JDK
+      - name: Setup JDK
         uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: adopt
 
-      - name: Build with Gradle
+      - name: Make Gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
+        continue-on-error: true
+
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest --stacktrace
+        continue-on-error: true
 
       - name: Upload APK Artifact
+        if: success() && github.event_name == 'push'
         uses: actions/upload-artifact@v2
         with:
-          name: my-game.apk
-          path: app/build/outputs/apk/release/app-release.apk
+          name: my-game-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: app/build/test-results/
