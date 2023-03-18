@@ -28,6 +28,7 @@ jobs:
         with:
           java-version: '11'
           distribution: adopt
+          java-option: '-Xms4g -Xmx4g'
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
