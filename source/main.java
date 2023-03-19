@@ -1,49 +1,58 @@
-import javax.swing.*;
-import java.awt.event.*;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
-public class Main extends JFrame {
-    
-    private ImageIcon[] animationFrames;
-    private JLabel animationLabel;
-    private Timer animationTimer;
-    private int currentFrame;
+public class MenuController extends Activity {
+    private Button newGameButton;
+    private Button loadGameButton;
+    private Button exitButton;
 
-    public Main() {
-        super("Animation Example");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        // Carregar os frames da animação
-        animationFrames = new ImageIcon[21];
-        for (int i = 0; i < animationFrames.length; i++) {
-            animationFrames[i] = new ImageIcon("path/to/frame_" + i + ".png");
-        }
-
-        // Configurar o label que exibirá a animação
-        animationLabel = new JLabel(animationFrames[0]);
-        getContentPane().add(animationLabel);
-
-        // Configurar o timer que atualiza a animação
-        animationTimer = new Timer(50, new ActionListener() {
+        newGameButton = (Button) findViewById(R.id.new_game_button);
+        newGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                currentFrame = (currentFrame + 1) % animationFrames.length;
-                animationLabel.setIcon(animationFrames[currentFrame]);
+            public void onClick(View v) {
+                startNewGame();
+            }
+        });
+
+        loadGameButton = (Button) findViewById(R.id.load_game_button);
+        loadGameButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadSavedGame();
+            }
+        });
+
+        exitButton = (Button) findViewById(R.id.exit_button);
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exitGame();
             }
         });
     }
 
-    public void startAnimation() {
-        animationTimer.start();
+    private void startNewGame() {
+        // Adicione o código para iniciar um novo jogo aqui
+        Intent intent = new Intent(MenuController.this, NewGameActivity.class);
+        startActivity(intent);
     }
 
-    public void stopAnimation() {
-        animationTimer.stop();
+    private void loadSavedGame() {
+        // Adicione o código para carregar um jogo salvo aqui
+        Intent intent = new Intent(MenuController.this, LoadGameActivity.class);
+        startActivity(intent);
     }
 
-    public static void main(String[] args) {
-        Main main = new Main();
-        main.setSize(200, 200);
-        main.setVisible(true);
-        main.startAnimation();
+    private void exitGame() {
+        finish();
+        System.exit(0);
     }
 }
