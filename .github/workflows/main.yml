@@ -1,0 +1,56 @@
+name: Bild
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Cache Gradle
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Setup JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: adopt
+          java-option: '-Xms4g -Xmx4g'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+        continue-on-error: true
+
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest --stacktrace
+        continue-on-error: true
+
+      - name: Upload APK Artifact
+        if: success() && github.event_name == 'push'
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-game-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: app/build/test-results/
